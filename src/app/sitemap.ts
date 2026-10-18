@@ -1,0 +1,3 @@
+import type { MetadataRoute } from "next";
+import { db } from "@/lib/db";
+export default async function sitemap():Promise<MetadataRoute.Sitemap>{const base=process.env.NEXT_PUBLIC_SITE_URL||"http://localhost:3000";const routes=["","/about","/portfolio","/services","/blog","/contact"].map(path=>({url:`${base}${path}`,lastModified:new Date(),changeFrequency:"weekly" as const,priority:path===""?1:.7}));const posts=await db.blogPost.findMany({where:{status:"PUBLISHED",publishedAt:{lte:new Date()}},select:{slug:true,updatedAt:true}});return [...routes,...posts.map(p=>({url:`${base}/blog/${p.slug}`,lastModified:p.updatedAt,changeFrequency:"monthly" as const,priority:.6}))]}

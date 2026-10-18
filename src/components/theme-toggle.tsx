@@ -1,0 +1,4 @@
+"use client";
+import { useEffect, useState } from "react";
+import { Moon, Sun } from "lucide-react";
+export function ThemeToggle(){const [light,setLight]=useState(false);useEffect(()=>{const v=localStorage.getItem("portfolio-theme");if(v==="light"){document.documentElement.classList.add("light");setLight(true)}},[]);function toggle(){const next=!light;setLight(next);document.documentElement.classList.toggle("light",next);localStorage.setItem("portfolio-theme",next?"light":"dark");document.documentElement.style.setProperty("--bg",next?"#f7f7f2":"#101014");document.documentElement.style.setProperty("--fg",next?"#161616":"#f5f5f5");document.documentElement.style.setProperty("--muted",next?"#5f6368":"#a1a1aa")}return <button aria-label="Toggle color theme" onClick={toggle} className="glass rounded-full p-2.5">{light?<Moon size={17}/>:<Sun size={17}/>}</button>}
