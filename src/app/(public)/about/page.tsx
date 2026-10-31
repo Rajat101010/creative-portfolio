@@ -70,7 +70,7 @@ export default async function About() {
                         <div key={s.id} className="card p-5">
                             <div className="flex justify-between gap-3">
                                 <span className="font-semibold">{s.name}</span>
-                                <span className="text-xs text-zinc-500">
+                                <span className="text-xs text-[var(--muted)]">
                                     {s.category}
                                 </span>
                             </div>
@@ -105,7 +105,7 @@ export default async function About() {
                             <p className="mt-1 text-sm text-zinc-400">
                                 {e.company}
                             </p>
-                            <p className="mt-4 text-sm leading-6 text-zinc-400 text-[var(--muted)]">
+                            <p className="mt-4 text-sm leading-6 text-[var(--muted)]">
                                 {e.description}
                             </p>
                         </div>
@@ -131,7 +131,7 @@ export default async function About() {
                                 {e.institution}
                             </p>
                             {e.description && (
-                                <p className="mt-3 text-sm text-zinc-500 text-[var(--muted)]">
+                                <p className="mt-3 text-sm text-[var(--muted)]">
                                     {e.description}
                                 </p>
                             )}

@@ -52,7 +52,7 @@ export function ProjectGrid({
                                 </div>
                             )}
 
-                            <span className="absolute left-4 top-4 rounded-full bg-[var(--surface)]/90 px-3 py-1 text-xs text-[var(--fg)] backdrop-blur">
+                            <span className="absolute left-4 top-4 rounded-full bg-[var(--surface)] px-3 py-1 text-xs text-[var(--fg)] backdrop-blur">
                                 {p.featured
                                     ? "Featured project"
                                     : "Selected work"}
