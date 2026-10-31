@@ -60,7 +60,7 @@ export function ThemeToggle() {
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("portfolio-theme");
-    const theme: Theme = savedTheme === "dark" ? "dark" : "light";
+    const theme: Theme = savedTheme === "light" ? "light" : "dark";
 
     setLight(theme === "light");
     applyTheme(theme);
