@@ -1,8 +1,8 @@
-
 "use client";
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 import { FiGithub } from "react-icons/fi";
 import { FaLinkedinIn } from "react-icons/fa";
@@ -10,17 +10,13 @@ import { RiTwitterXFill } from "react-icons/ri";
 import { BiLogoGmail } from "react-icons/bi";
 import { GrInstagram } from "react-icons/gr";
 
-
 import {
     ArrowUpRight,
-    Github,
-    Linkedin,
-    Instagram,
     Globe,
     Menu,
     X,
-    Mail,
 } from "lucide-react";
+
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const iconMap: Record<string, any> = {
@@ -50,8 +46,8 @@ export function Header({
 }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const headerRef = useRef<HTMLElement>(null);
+    const pathname = usePathname();
 
-    // Close the mobile menu when clicking or tapping outside the header.
     useEffect(() => {
         function handleOutsideClick(event: MouseEvent | TouchEvent) {
             if (
@@ -71,7 +67,6 @@ export function Header({
         };
     }, []);
 
-    // Close the mobile menu when switching to desktop width.
     useEffect(() => {
         function handleResize() {
             if (window.innerWidth >= 768) {
@@ -87,7 +82,7 @@ export function Header({
     return (
         <header
             ref={headerRef}
-            className="sticky top-0 z-40 border-b border-white/10 bg-[#101014]/90 backdrop-blur-xl"
+            className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--bg)] backdrop-blur-xl"
         >
             <div className="container flex h-[74px] items-center justify-between">
                 {/* Logo and site title */}
@@ -104,25 +99,37 @@ export function Header({
                             className="h-9 w-9 shrink-0 rounded-xl object-cover"
                         />
                     ) : (
-                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-lime text-black">
-                            R.
+                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[var(--accent)] text-[var(--bg)]">
+                            R
                         </span>
                     )}
 
-                    <span className="truncate">{settings.siteTitle}</span>
+                    <span className="truncate text-[var(--fg)]">
+                        {settings.siteTitle}
+                    </span>
                 </Link>
 
                 {/* Desktop navigation */}
-                <nav className="hidden items-center gap-7 text-sm text-zinc-300 md:flex">
-                    {navLinks.map(([label, href]) => (
-                        <Link
-                            key={href}
-                            href={href}
-                            className="transition hover:text-lime"
-                        >
-                            {label}
-                        </Link>
-                    ))}
+                <nav className="hidden items-center gap-7 text-sm md:flex">
+                    {navLinks.map(([label, href]) => {
+                        const isActive =
+                            pathname === href ||
+                            (href !== "/" && pathname.startsWith(`${href}/`));
+
+                        return (
+                            <Link
+                                key={href}
+                                href={href}
+                                className={`relative py-1 transition-colors hover:text-[var(--accent)] ${
+                                    isActive
+                                        ? "font-semibold text-[var(--accent)] after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:bg-[var(--accent)] after:content-['']"
+                                        : "text-[var(--muted)]"
+                                }`}
+                            >
+                                {label}
+                            </Link>
+                        );
+                    })}
                 </nav>
 
                 {/* Header actions */}
@@ -132,7 +139,7 @@ export function Header({
                         <ThemeToggle />
                     </div>
 
-                    {/* Desktop contact button */}
+                    {/* Contact button */}
                     <Link
                         href="/contact"
                         className="btn btn-primary hidden !px-4 !py-2.5 text-sm sm:inline-flex"
@@ -140,10 +147,10 @@ export function Header({
                         Let's talk <ArrowUpRight size={15} />
                     </Link>
 
-                    {/* Mobile hamburger button */}
+                    {/* Mobile hamburger */}
                     <button
                         type="button"
-                        className="grid h-10 w-10 place-items-center rounded-lg border border-white/10 text-zinc-200 transition hover:text-lime md:hidden"
+                        className="grid h-10 w-10 place-items-center rounded-lg border border-[var(--border)] text-[var(--fg)] transition-colors hover:text-[var(--accent)] md:hidden"
                         onClick={() => setMenuOpen((open) => !open)}
                         aria-label={
                             menuOpen ? "Close navigation" : "Open navigation"
@@ -156,35 +163,48 @@ export function Header({
                 </div>
             </div>
 
-            {/* Mobile navigation dropdown */}
+            {/* Mobile navigation */}
             {menuOpen && (
                 <nav
                     id="mobile-navigation"
-                    className="border-t border-white/10 bg-[#101014] px-6 py-4 shadow-xl md:hidden"
+                    className="border-t border-[var(--border)] bg-[var(--bg)] px-6 py-4 shadow-xl md:hidden"
                 >
-                    {navLinks.map(([label, href]) => (
-                        <Link
-                            key={href}
-                            href={href}
-                            onClick={() => setMenuOpen(false)}
-                            className="block border-b border-white/5 py-3.5 text-sm text-zinc-300 transition last:border-0 hover:text-lime"
-                        >
-                            {label}
-                        </Link>
-                    ))}
+                    {navLinks.map(([label, href]) => {
+                        const isActive =
+                            pathname === href ||
+                            (href !== "/" && pathname.startsWith(`${href}/`));
 
-                    {/* Mobile contact link */}
+                        return (
+                            <Link
+                                key={href}
+                                href={href}
+                                onClick={() => setMenuOpen(false)}
+                                className={`block border-b border-[var(--border)] py-3.5 text-sm transition-colors last:border-0 hover:text-[var(--accent)] ${
+                                    isActive
+                                        ? "font-semibold text-[var(--accent)]"
+                                        : "text-[var(--muted)]"
+                                }`}
+                            >
+                                {label}
+                                {isActive && (
+                                    <span className="ml-2 inline-block h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+                                )}
+                            </Link>
+                        );
+                    })}
+
+                    {/* Mobile contact */}
                     <Link
                         href="/contact"
                         onClick={() => setMenuOpen(false)}
-                        className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-lime"
+                        className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent)]"
                     >
                         Let's talk <ArrowUpRight size={15} />
                     </Link>
 
                     {/* Mobile theme toggle */}
-                    <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
-                        <span className="text-sm text-zinc-300">
+                    <div className="mt-4 flex items-center justify-between border-t border-[var(--border)] pt-4">
+                        <span className="text-sm text-[var(--muted)]">
                             Change the Theme
                         </span>
                         <ThemeToggle />
@@ -205,21 +225,21 @@ export function Footer({
     socials: { id: string; label: string; url: string; icon: string }[];
 }) {
     return (
-        <footer className="border-t border-white/10 py-10 sm:py-14">
+        <footer className="border-t border-[var(--border)] py-10 sm:py-14">
             <div className="container">
-                {/* Responsive footer columns */}
+                {/* Footer columns */}
                 <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:gap-10">
                     {/* Brand and social links */}
                     <div className="col-span-2 min-w-0 md:col-span-1">
                         <Link
                             href="/"
-                            className="text-xl font-bold"
+                            className="text-xl font-bold text-[var(--fg)]"
                         >
                             {settings.siteTitle}
-                            <span className="text-lime">.</span>
+                            <span className="text-[var(--accent)]">.</span>
                         </Link>
 
-                        <p className="mt-4 max-w-xs text-sm leading-6 text-zinc-400">
+                        <p className="mt-4 max-w-xs text-sm leading-6 text-[var(--muted)]">
                             {settings.footerText}
                         </p>
 
@@ -235,7 +255,7 @@ export function Footer({
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         aria-label={s.label}
-                                        className="glass rounded-full p-2.5"
+                                        className="rounded-full bg-[var(--surface-tertiary)] p-2.5 text-[var(--fg)] transition-colors hover:text-[var(--accent)]"
                                     >
                                         <Icon size={16} />
                                     </a>
@@ -246,7 +266,7 @@ export function Footer({
 
                     {/* Explore links */}
                     <div className="min-w-0">
-                        <h3 className="mb-4 text-sm font-bold">
+                        <h3 className="mb-4 text-sm font-bold text-[var(--fg)]">
                             Explore
                         </h3>
 
@@ -258,62 +278,62 @@ export function Footer({
                             ["Blog", "/blog"],
                             ["Contact", "/contact"],
                         ].map(([label, href]) => (
-                            <Link
-                                key={href}
-                                href={href}
-                                className="mb-3 block break-words text-sm text-zinc-400 transition hover:text-lime"
-                            >
-                                {label}
-                            </Link>
+                            <div key={href} className="mb-1">
+                                <Link href={href}>
+                                    <span className="text-sm text-[var(--muted)] transition-colors hover:text-[var(--accent)]">
+                                        {label}
+                                    </span>
+                                </Link>
+                            </div>
                         ))}
                     </div>
 
                     {/* Selected projects */}
                     <div className="min-w-0">
-                        <h3 className="mb-4 text-sm font-bold">
+                        <h3 className="mb-4 text-sm font-bold text-[var(--fg)]">
                             Selected Projects
                         </h3>
 
                         {projects.slice(0, 7).map((p) => (
-                            <Link
-                                key={p.id}
-                                href={`/portfolio#${p.slug}`}
-                                className="mb-3 flex min-w-0 items-start gap-1 text-sm text-zinc-400 transition hover:text-lime"
-                            >
-                                <span className="min-w-0 break-words">
-                                    {p.title}
-                                </span>
+                            <div key={p.id} className="mb-1.5">
+                                <Link href={`/portfolio#${p.slug}`}>
+                                    <span className="inline-flex items-start gap-1 text-sm text-[var(--muted)] transition-colors hover:text-[var(--accent)]">
+                                        <span className="min-w-0 break-words">
+                                            {p.title}
+                                        </span>
 
-                                <ArrowUpRight
-                                    size={12}
-                                    className="mt-1 shrink-0"
-                                />
-                            </Link>
+                                        <ArrowUpRight
+                                            size={12}
+                                            className="mt-1 shrink-0"
+                                        />
+                                    </span>
+                                </Link>
+                            </div>
                         ))}
                     </div>
 
                     {/* Contact CTA */}
                     <div className="col-span-2 min-w-0 md:col-span-1">
-                        <h3 className="mb-4 text-sm font-bold">
+                        <h3 className="mb-4 text-sm font-bold text-[var(--fg)]">
                             Have a project?
                         </h3>
 
-                        <p className="text-sm leading-6 text-zinc-400">
+                        <p className="text-sm leading-6 text-[var(--muted)]">
                             Have an idea that needs design and code? Let's make
                             it real.
                         </p>
 
                         <Link
                             href="/contact"
-                            className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-lime"
+                            className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent)] transition-colors hover:text-[var(--accent-hover)]"
                         >
                             Start a conversation <ArrowUpRight size={15} />
                         </Link>
                     </div>
                 </div>
 
-                {/* Copyright and footer message */}
-                <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-center text-xs leading-5 text-zinc-500 sm:flex-row sm:text-left">
+                {/* Copyright */}
+                <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-[var(--border)] pt-6 text-center text-xs leading-5 text-[var(--muted)] sm:flex-row sm:text-left">
                     <span>
                         © {new Date().getFullYear()} {settings.siteTitle}. All
                         rights reserved.

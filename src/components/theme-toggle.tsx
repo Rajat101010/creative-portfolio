@@ -1,4 +1,85 @@
+
 "use client";
+
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
-export function ThemeToggle(){const [light,setLight]=useState(false);useEffect(()=>{const v=localStorage.getItem("portfolio-theme");if(v==="light"){document.documentElement.classList.add("light");setLight(true)}},[]);function toggle(){const next=!light;setLight(next);document.documentElement.classList.toggle("light",next);localStorage.setItem("portfolio-theme",next?"light":"dark");document.documentElement.style.setProperty("--bg",next?"#f7f7f2":"#101014");document.documentElement.style.setProperty("--fg",next?"#161616":"#f5f5f5");document.documentElement.style.setProperty("--muted",next?"#5f6368":"#a1a1aa")}return <button aria-label="Toggle color theme" onClick={toggle} className="glass rounded-full p-2.5">{light?<Moon size={17}/>:<Sun size={17}/>}</button>}
+
+const themes = {
+  light: {
+    "--bg": "#F3EEE5",
+    "--fg": "#69635a",
+    "--muted": "#70675C",
+    "--accent": "#3b2914",
+    "--accent-hover": "#62472E",
+    "--surface": "#FFFCF7",
+    "--surface-secondary": "#E8DFD1",
+    "--surface-tertiary": "#DDD1BF",
+    "--border": "#D3C5B2",
+    "--border-strong": "#BFAE98",
+    "--glass-bg": "rgba(255,252,247,0.90)",
+    "--glass-border": "#D3C5B2",
+    "--card-bg": "#FFFCF7",
+    "--card-border": "#D3C5B2",
+    "--card-shadow": "0 8px 28px rgba(66,49,30,0.09)",
+  },
+  dark: {
+    "--bg": "#171512",
+    "--fg": "#F5EFE6",
+    "--muted": "#C0B3A1",
+    "--accent": "#face95",
+    "--accent-hover": "#E6CBA7",
+    "--surface": "#29241E",
+    "--surface-secondary": "#302920",
+    "--surface-tertiary": "#3B3227",
+    "--border": "#514638",
+    "--border-strong": "#76634D",
+    "--glass-bg": "rgba(41,36,30,0.94)",
+    "--glass-border": "#514638",
+    "--card-bg": "#29241E",
+    "--card-border": "#514638",
+    "--card-shadow": "0 8px 28px rgba(0,0,0,0.30)",
+  },
+};
+
+type Theme = "light" | "dark";
+
+export function ThemeToggle() {
+  const [light, setLight] = useState(false);
+
+  function applyTheme(theme: Theme) {
+    const root = document.documentElement;
+
+    root.classList.toggle("light", theme === "light");
+
+    Object.entries(themes[theme]).forEach(([key, value]) => {
+      root.style.setProperty(key, value);
+    });
+
+    localStorage.setItem("portfolio-theme", theme);
+  }
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("portfolio-theme");
+    const theme: Theme = savedTheme === "dark" ? "dark" : "light";
+
+    setLight(theme === "light");
+    applyTheme(theme);
+  }, []);
+
+  function toggle() {
+    const nextTheme: Theme = light ? "dark" : "light";
+
+    setLight(nextTheme === "light");
+    applyTheme(nextTheme);
+  }
+
+  return (
+    <button
+      aria-label="Toggle color theme"
+      onClick={toggle}
+      className="bg-[var(--surface-tertiary)] rounded-full p-2.5 transition-all duration-300 hover:scale-105"
+    >
+      {light ? <Moon size={17} /> : <Sun size={17} />}
+    </button>
+  );
+}

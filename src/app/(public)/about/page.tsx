@@ -10,7 +10,7 @@ export default async function About() {
     return (
         <div className="container section-pad">
             <Reveal>
-                <p className="mb-3 text-xs font-bold uppercase tracking-[.25em] text-lime">
+                <p className="mb-3 text-xs font-bold uppercase tracking-[.25em] text-[#A68B6B]">
                     A little about me
                 </p>
 
@@ -22,7 +22,7 @@ export default async function About() {
                 </h1>
 
                 <div className="mt-10">
-                    <p className="w-full text-lg leading-8 text-zinc-300">
+                    <p className="w-full text-lg leading-8 text-[var(--muted)]">
                         {String(d.about.bio || "")}
                     </p>
 
@@ -41,16 +41,16 @@ export default async function About() {
                         <div className="flex flex-col justify-center">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="card p-5">
-                                    <p className="text-3xl font-bold text-lime">
+                                    <p className="text-3xl font-bold text-[#A68B6B]">
                                         {d.projects.length}+
                                     </p>
                                     <p className="mt-2 text-sm text-zinc-400">
-                                        Projects and experiments
+                                        Projects & Builds
                                     </p>
                                 </div>
 
                                 <div className="card p-5">
-                                    <p className="text-3xl font-bold text-lime">
+                                    <p className="text-3xl font-bold text-[#A68B6B]">
                                         {d.skills.length}+
                                     </p>
                                     <p className="mt-2 text-sm text-zinc-400">
@@ -75,14 +75,11 @@ export default async function About() {
                                 </span>
                             </div>
 
-                            <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
+                            <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[var(--surface-tertiary)]">
                                 <div
-                                    className="h-full rounded-full bg-lime"
+                                    className="h-full rounded-full bg-[var(--accent)]"
                                     style={{
-                                        width: `${Math.max(
-                                            0,
-                                            Math.min(100, s.level)
-                                        )}%`,
+                                        width: `${Math.max(0, Math.min(100, s.level))}%`,
                                     }}
                                 />
                             </div>
@@ -99,7 +96,7 @@ export default async function About() {
                 <div className="grid gap-4 md:grid-cols-2">
                     {d.experience.map((e) => (
                         <div key={e.id} className="card p-6">
-                            <p className="text-xs uppercase tracking-wider text-lime">
+                            <p className="text-xs uppercase tracking-wider text-[var(--muted)]">
                                 {e.startDate} — {e.endDate || "Present"}
                             </p>
                             <h3 className="mt-3 text-xl font-bold">
@@ -108,7 +105,7 @@ export default async function About() {
                             <p className="mt-1 text-sm text-zinc-400">
                                 {e.company}
                             </p>
-                            <p className="mt-4 text-sm leading-6 text-zinc-400">
+                            <p className="mt-4 text-sm leading-6 text-zinc-400 text-[var(--muted)]">
                                 {e.description}
                             </p>
                         </div>
@@ -124,7 +121,7 @@ export default async function About() {
                 <div className="grid gap-4 md:grid-cols-2">
                     {d.education.map((e) => (
                         <div key={e.id} className="card p-6">
-                            <p className="text-xs text-lime">
+                            <p className="text-xs text-[#A68B6B]">
                                 {e.startDate} — {e.endDate}
                             </p>
                             <h3 className="mt-3 text-xl font-bold">
@@ -134,7 +131,7 @@ export default async function About() {
                                 {e.institution}
                             </p>
                             {e.description && (
-                                <p className="mt-3 text-sm text-zinc-500">
+                                <p className="mt-3 text-sm text-zinc-500 text-[var(--muted)]">
                                     {e.description}
                                 </p>
                             )}

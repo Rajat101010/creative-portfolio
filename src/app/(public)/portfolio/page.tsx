@@ -59,7 +59,7 @@ export default async function Portfolio() {
                                 <p className="mt-2 text-sm text-zinc-400">
                                     {c.issuer}
                                 </p>
-                                <p className="mt-3 text-xs text-lime">
+                                <p className="mt-3 text-xs text-[#A68B6B]">
                                     {c.date}
                                 </p>
                             </div>

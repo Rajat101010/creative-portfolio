@@ -1,4 +1,3 @@
-
 "use client";
 
 import { FormEvent, useState } from "react";
@@ -37,53 +36,59 @@ export default function Login() {
   }
 
   return (
-    <main className="grid min-h-screen place-items-center bg-[#101014] px-5 text-white">
+    <main className="grid min-h-screen place-items-center bg-[var(--bg)] px-5 text-[var(--fg)]">
       <form
         onSubmit={submit}
-        className="w-full max-w-md rounded-3xl border border-white/10 bg-white/[.04] p-8"
+        className="w-full max-w-md rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[var(--shadow)]"
       >
-        <div className="mb-7 grid h-12 w-12 place-items-center rounded-2xl bg-lime font-bold text-black">
+        <div className="mb-7 grid h-12 w-12 place-items-center rounded-2xl bg-[var(--accent)] font-bold text-[var(--bg)]">
           R.
         </div>
 
-        <p className="text-xs uppercase tracking-[.25em] text-lime">
+        <p className="text-xs uppercase tracking-[.25em] text-[var(--accent)]">
           Private area
         </p>
+
         <h1 className="mt-3 text-3xl font-bold">Admin sign in</h1>
-        <p className="mt-2 text-sm text-zinc-400">
+
+        <p className="mt-2 text-sm text-[var(--muted)]">
           Manage the content of your portfolio.
         </p>
 
-        <label className="mt-7 block text-sm">
+        <label className="mt-7 block text-sm font-medium">
           Email
           <input
             name="email"
             type="email"
             required
             autoComplete="username"
-            className="mt-2 w-full rounded-xl border border-white/10 bg-black/30 p-3 outline-none focus:border-lime"
+            placeholder="Enter your email"
+            className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3 text-[var(--fg)] outline-none transition placeholder:text-[var(--muted)] focus:border-[var(--accent)]"
           />
         </label>
 
-        <label className="mt-4 block text-sm">
+        <label className="mt-4 block text-sm font-medium">
           Password
           <input
             name="password"
             type="password"
             required
             autoComplete="current-password"
-            className="mt-2 w-full rounded-xl border border-white/10 bg-black/30 p-3 outline-none focus:border-lime"
+            placeholder="Enter your password"
+            className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3 text-[var(--fg)] outline-none transition placeholder:text-[var(--muted)] focus:border-[var(--accent)]"
           />
         </label>
 
         {error && (
-          <p className="mt-4 text-sm text-red-300">{error}</p>
+          <p className="mt-4 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-300">
+            {error}
+          </p>
         )}
 
         <button
           type="submit"
           disabled={busy}
-          className="mt-6 w-full rounded-full bg-lime p-3 font-bold text-black disabled:opacity-60"
+          className="mt-6 w-full rounded-full bg-[var(--accent)] p-3 font-bold text-[var(--bg)] transition hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {busy ? "Signing in…" : "Sign in"}
         </button>

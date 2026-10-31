@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import {
     ArrowDownRight,
@@ -23,14 +22,14 @@ export default async function Home() {
     return (
         <>
             <section className="grid-bg relative overflow-hidden">
-                <div className="pointer-events-none absolute -right-20 top-12 h-80 w-80 rounded-full bg-violet/20 blur-[100px]" />
-                <div className="pointer-events-none absolute -left-20 bottom-0 h-72 w-72 rounded-full bg-lime/10 blur-[100px]" />
+                <div className="pointer-events-none absolute -right-20 top-12 h-80 w-80 rounded-full bg-[var(--accent)]/15 blur-[100px]" />
+                <div className="pointer-events-none absolute -left-20 bottom-0 h-72 w-72 rounded-full bg-[var(--accent)]/10 blur-[100px]" />
 
                 <div className="container relative grid min-h-[78vh] items-center gap-12 py-20 lg:grid-cols-[1.3fr_.7fr]">
                     <div>
                         <Reveal>
-                            <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs tracking-wider text-zinc-300">
-                                <span className="h-2 w-2 rounded-full bg-lime shadow-glow" />
+                            <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-xs tracking-wider text-[var(--muted)]">
+                                <span className="h-2 w-2 rounded-full bg-[var(--accent)] shadow-glow" />
                                 {String(d.hero.eyebrow || "DESIGNER × DEVELOPER")}
                             </div>
 
@@ -48,7 +47,7 @@ export default async function Home() {
                                 </span>
                             </h1>
 
-                            <p className="mt-7 max-w-xl text-lg leading-8 text-zinc-400">
+                            <p className="mt-7 max-w-xl text-lg leading-8 text-[var(--muted)]">
                                 {String(d.hero.intro || d.settings.tagline)}
                             </p>
 
@@ -70,7 +69,6 @@ export default async function Home() {
                                 </Link>
                             </div>
 
-
                             <div className="mt-10 flex flex-wrap gap-2">
                                 {(Array.isArray(d.hero.roles)
                                     ? d.hero.roles
@@ -80,7 +78,7 @@ export default async function Home() {
                                 ).map((role: string, index: number) => (
                                     <span
                                         key={`${role}-${index}`}
-                                        className="rounded-full border border-white/10 px-3 py-2 text-xs text-zinc-400"
+                                        className="rounded-full border border-[var(--border)] px-3 py-2 text-xs text-[var(--muted)]"
                                     >
                                         {role}
                                     </span>
@@ -90,15 +88,15 @@ export default async function Home() {
                     </div>
 
                     <Reveal delay={0.15} className="relative mx-4 sm:mx-0">
-                        <div className="relative mx-auto aspect-square max-w-[390px] rounded-[36px] border border-white/15 bg-gradient-to-br from-white/10 to-white/[.02] p-5 shadow-glow">
-                            <div className="grid-bg flex h-full flex-col justify-between overflow-hidden rounded-[25px] border border-white/10 p-6">
-                                <div className="flex justify-between text-xs uppercase tracking-[.2em] text-zinc-500">
+                        <div className="relative mx-auto aspect-square max-w-[390px] rounded-[36px] border border-[var(--border-strong)] bg-gradient-to-br from-[var(--surface)] to-[var(--surface-secondary)] p-5 shadow-[var(--shadow)]">
+                            <div className="grid-bg flex h-full flex-col justify-between overflow-hidden rounded-[25px] border border-[var(--border)] p-6">
+                                <div className="flex justify-between text-xs uppercase tracking-[.2em] text-[var(--muted)]">
                                     <span>Portfolio / Rajat</span>
-                                    <Sparkles size={17} className="text-lime" />
+                                    <Sparkles size={17} className="text-[var(--accent)]" />
                                 </div>
 
                                 <div>
-                                    <p className="text-sm text-zinc-400">
+                                    <p className="text-sm text-[var(--muted)]">
                                         Multicreative
                                     </p>
                                     <p className="mt-2 text-4xl font-bold leading-tight">
@@ -110,32 +108,31 @@ export default async function Home() {
 
                                 <div className="flex items-end justify-between">
                                     <div className="flex -space-x-2">
-                                        <span className="h-9 w-9 rounded-full border-2 border-[#17171b] bg-lime" />
-                                        <span className="h-9 w-9 rounded-full border-2 border-[#17171b] bg-violet" />
-                                        <span className="h-9 w-9 rounded-full border-2 border-[#17171b] bg-cyan-300" />
+                                        <span className="h-9 w-9 rounded-full border-2 border-[var(--surface)] bg-[var(--accent)]" />
+                                        <span className="h-9 w-9 rounded-full border-2 border-[var(--surface)] bg-[var(--border-strong)]" />
+                                        <span className="h-9 w-9 rounded-full border-2 border-[var(--surface)] bg-[var(--surface-tertiary)]" />
                                     </div>
-                                    <span className="text-xs text-zinc-500">
+                                    <span className="text-xs text-[var(--muted)]">
                                         Design · Code · Strategy
                                     </span>
                                 </div>
                             </div>
 
-                            <div className="absolute -right-4 top-1/4 rounded-2xl border border-white/15 bg-[#1b1b21] px-4 py-3 shadow-xl">
-                                <p className="text-xs text-zinc-500">CURRENT FOCUS</p>
+                            <div className="absolute -right-4 top-1/4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 shadow-[var(--shadow)]">
+                                <p className="text-xs text-[var(--muted)]">CURRENT FOCUS</p>
                                 <p className="mt-1 text-sm font-semibold">
                                     Digital experiences
                                 </p>
                             </div>
 
-                            <div className="absolute -bottom-4 -left-4 rounded-2xl bg-lime p-4 text-black">
+                            <div className="absolute -bottom-4 -left-4 rounded-2xl bg-[var(--accent)] p-4 text-[var(--bg)]">
                                 <ArrowDownRight size={25} />
                             </div>
                         </div>
                     </Reveal>
                 </div>
 
-                <div className="container pb-7">
-                </div>
+                <div className="container pb-7"></div>
             </section>
 
             {/* Projects */}
@@ -152,7 +149,7 @@ export default async function Home() {
 
                     <Link
                         href="/portfolio"
-                        className="mb-10 inline-flex items-center gap-2 text-sm font-bold text-lime"
+                        className="mb-10 inline-flex items-center gap-2 text-sm font-bold text-[var(--accent)]"
                     >
                         All projects <ArrowUpRight size={16} />
                     </Link>
@@ -161,9 +158,8 @@ export default async function Home() {
                 <ProjectGrid projects={featured.length ? featured : d.projects.slice(0, 4)} />
             </section>
 
-
             {/* Services */}
-            <section className="section-pad border-y border-white/5 bg-white/[.02]">
+            <section className="section-pad border-y border-[var(--border)] bg-[var(--surface-secondary)]">
                 <div className="container">
                     <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
                         <SectionTitle
@@ -177,7 +173,7 @@ export default async function Home() {
 
                         <Link
                             href="/services"
-                            className="mb-10 inline-flex items-center gap-2 text-sm font-bold text-lime"
+                            className="mb-10 inline-flex items-center gap-2 text-sm font-bold text-[var(--accent)]"
                         >
                             All services <ArrowUpRight size={16} />
                         </Link>
@@ -186,7 +182,6 @@ export default async function Home() {
                     <ServiceGrid services={d.services.slice(0, 3)} />
                 </div>
             </section>
-
 
             {/* Blog */}
             {posts.length > 0 && (
@@ -203,7 +198,7 @@ export default async function Home() {
 
                         <Link
                             href="/blog"
-                            className="mb-10 hidden items-center gap-2 text-sm font-bold text-lime sm:flex"
+                            className="mb-10 hidden items-center gap-2 text-sm font-bold text-[var(--accent)] sm:flex"
                         >
                             All articles <ArrowUpRight size={16} />
                         </Link>
@@ -216,10 +211,10 @@ export default async function Home() {
             {/* Contact CTA */}
             <section className="container pb-24">
                 <div className="card grid-bg relative overflow-hidden p-8 sm:p-14">
-                    <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-lime/10 blur-3xl" />
+                    <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[var(--accent)]/10 blur-3xl" />
 
                     <div className="relative max-w-2xl">
-                        <p className="text-xs font-bold uppercase tracking-[.25em] text-lime">
+                        <p className="text-xs font-bold uppercase tracking-[.25em] text-[var(--accent)]">
                             Have a project in mind?
                         </p>
 

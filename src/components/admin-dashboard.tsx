@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -60,7 +59,9 @@ const blank: Record<string, Item> = {
 };
 
 const imagePattern = /image|photo|picture|avatar|thumbnail|cover|banner|logo|profile|portrait/i;
-const inputClass = "w-full rounded-xl border border-white/10 bg-black/20 px-3 py-2.5 text-white outline-none focus:border-lime";
+
+const inputClass =
+    "w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 text-[var(--fg)] outline-none transition placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/10";
 
 const defaultHomeSections: Item = {
     blogTitle: "Notes & ideas",
@@ -152,9 +153,10 @@ function humanize(key: string) {
 
 function parseContent(record: Item | undefined): Item {
     try {
-        const parsed = typeof record?.content === "string"
-            ? JSON.parse(record.content || "{}")
-            : record?.content;
+        const parsed =
+            typeof record?.content === "string"
+                ? JSON.parse(record.content || "{}")
+                : record?.content;
 
         return parsed && typeof parsed === "object" && !Array.isArray(parsed)
             ? parsed
@@ -221,32 +223,46 @@ function ImageUploader({
     return (
         <div className="space-y-3">
             {value ? (
-                <div className="relative w-full max-w-sm overflow-hidden rounded-xl border border-white/10 bg-black/20">
+                <div className="relative w-full max-w-sm overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)]">
                     <img src={value} alt="Image preview" className="h-48 w-full object-cover" />
+
                     <button
                         type="button"
                         onClick={() => onChange("")}
                         aria-label="Remove image"
-                        className="absolute right-2 top-2 rounded-full bg-black/80 p-2 hover:bg-red-600"
+                        className="absolute right-2 top-2 rounded-full bg-black/75 p-2 text-white transition hover:bg-red-600"
                     >
                         <X size={16} />
                     </button>
                 </div>
             ) : (
-                <div className="flex h-32 w-full max-w-sm flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 text-sm text-zinc-500">
+                <div className="flex h-32 w-full max-w-sm flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-[var(--border-strong)] bg-[var(--surface-secondary)] text-sm text-[var(--muted)]">
                     <ImageIcon size={25} />
                     No image selected
                 </div>
             )}
 
-            <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/15 px-4 py-2.5 text-sm text-lime hover:bg-white/5">
-                {uploading ? <LoaderCircle size={15} className="animate-spin" /> : <Upload size={15} />}
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[var(--border-strong)] px-4 py-2.5 text-sm text-[var(--accent)] transition hover:bg-[var(--surface-secondary)]">
+                {uploading ? (
+                    <LoaderCircle size={15} className="animate-spin" />
+                ) : (
+                    <Upload size={15} />
+                )}
+
                 {uploading ? "Uploading..." : value ? "Change image" : "Upload from device"}
-                <input type="file" accept="image/*" className="hidden" disabled={uploading} onChange={handleUpload} />
+
+                <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    disabled={uploading}
+                    onChange={handleUpload}
+                />
             </label>
 
-            <p className="text-xs text-zinc-500">Maximum file size: 10 MB.</p>
-            {error && <p className="text-sm text-red-400">{error}</p>}
+            <p className="text-xs text-[var(--muted)]">Maximum file size: 10 MB.</p>
+
+            {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
     );
 }
@@ -265,23 +281,44 @@ function Field({
     const isBoolean = typeof value === "boolean" || ["featured", "pinned"].includes(key);
     const isNumber = typeof value === "number" || ["sortorder", "level"].includes(key);
     const isArray = Array.isArray(value);
-    const isLongText = ["description", "content", "excerpt", "bio", "about", "intro"].some((word) => key.includes(word));
+
+    const isLongText = [
+        "description",
+        "content",
+        "excerpt",
+        "bio",
+        "about",
+        "intro",
+    ].some((word) => key.includes(word));
 
     return (
-        <label className={`block space-y-2 text-sm ${isImage || isLongText || isArray ? "sm:col-span-2" : ""}`}>
-            <span className="block font-medium text-zinc-300">{humanize(name)}</span>
+        <label
+            className={`block space-y-2 text-sm ${
+                isImage || isLongText || isArray ? "sm:col-span-2" : ""
+            }`}
+        >
+            <span className="block font-medium text-[var(--fg)]">
+                {humanize(name)}
+            </span>
 
             {isImage ? (
-                <ImageUploader value={typeof value === "string" ? value : ""} onChange={onChange} />
+                <ImageUploader
+                    value={typeof value === "string" ? value : ""}
+                    onChange={onChange}
+                />
             ) : isBoolean ? (
                 <input
                     type="checkbox"
                     checked={!!value}
                     onChange={(event) => onChange(event.target.checked)}
-                    className="h-5 w-5 accent-lime"
+                    className="h-5 w-5 cursor-pointer accent-[var(--accent)]"
                 />
             ) : key === "status" ? (
-                <select value={value || "DRAFT"} onChange={(event) => onChange(event.target.value)} className={inputClass}>
+                <select
+                    value={value || "DRAFT"}
+                    onChange={(event) => onChange(event.target.value)}
+                    className={inputClass}
+                >
                     <option value="DRAFT">Draft</option>
                     <option value="PUBLISHED">Published</option>
                 </select>
@@ -289,7 +326,13 @@ function Field({
                 <input
                     type="number"
                     value={value ?? 0}
-                    onChange={(event) => onChange(event.target.value === "" ? "" : Number(event.target.value))}
+                    onChange={(event) =>
+                        onChange(
+                            event.target.value === ""
+                                ? ""
+                                : Number(event.target.value)
+                        )
+                    }
                     className={inputClass}
                 />
             ) : key === "tags" ? (
@@ -304,7 +347,14 @@ function Field({
                 <textarea
                     rows={3}
                     value={value.join(", ")}
-                    onChange={(event) => onChange(event.target.value.split(",").map((item: string) => item.trim()).filter(Boolean))}
+                    onChange={(event) =>
+                        onChange(
+                            event.target.value
+                                .split(",")
+                                .map((item: string) => item.trim())
+                                .filter(Boolean)
+                        )
+                    }
                     placeholder="Separate items with commas"
                     className={inputClass}
                 />
@@ -327,7 +377,6 @@ function Field({
     );
 }
 
-/* Shared card design for every dedicated Page Content section. */
 function ContentSectionCard({
     title,
     description,
@@ -352,25 +401,27 @@ function ContentSectionCard({
     const sectionLabel = humanize(section);
 
     return (
-        <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/[.03]">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 p-5 sm:p-6">
+        <section className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card-bg)] shadow-[var(--shadow)]">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border)] p-5 sm:p-6">
                 <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-lime/10 px-3 py-1 text-xs font-semibold text-lime">
+                        <span className="rounded-full bg-[var(--surface-secondary)] px-3 py-1 text-xs font-semibold text-[var(--accent)]">
                             {pageLabel}
                         </span>
-                        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-400">
+
+                        <span className="rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--muted)]">
                             {sectionLabel}
                         </span>
                     </div>
-                    <h3 className="mt-3 text-lg font-bold">{title}</h3>
-                    <p className="mt-1 text-sm text-zinc-400">{description}</p>
+
+                    <h3 className="mt-3 text-lg font-bold text-[var(--fg)]">{title}</h3>
+                    <p className="mt-1 text-sm text-[var(--muted)]">{description}</p>
                 </div>
 
                 <button
                     type="button"
                     onClick={() => setExpanded((prev) => !prev)}
-                    className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-300 transition hover:bg-white/5"
+                    className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--fg)] transition hover:bg-[var(--surface-secondary)]"
                 >
                     {expanded ? "Collapse" : "Edit content"}
                 </button>
@@ -379,7 +430,9 @@ function ContentSectionCard({
             {expanded && (
                 <div className="p-5 sm:p-6">
                     {Object.keys(content).length === 0 ? (
-                        <p className="text-sm text-zinc-400">This section has no editable fields.</p>
+                        <p className="text-sm text-[var(--muted)]">
+                            This section has no editable fields.
+                        </p>
                     ) : (
                         <div className="grid gap-5 sm:grid-cols-2">
                             {Object.entries(content).map(([key, value]) => (
@@ -387,24 +440,31 @@ function ContentSectionCard({
                                     <Field
                                         name={key}
                                         value={value}
-                                        onChange={(nextValue) => onChange({ ...content, [key]: nextValue })}
+                                        onChange={(nextValue) =>
+                                            onChange({ ...content, [key]: nextValue })
+                                        }
                                     />
                                 </div>
                             ))}
                         </div>
                     )}
 
-                    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5">
-                        <p className="text-xs text-zinc-500">
+                    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border)] pt-5">
+                        <p className="text-xs text-[var(--muted)]">
                             Page: {pageLabel} · Section: {sectionLabel}
                         </p>
+
                         <button
                             type="button"
                             onClick={onSave}
                             disabled={saving}
                             className="btn btn-primary disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            {saving ? <LoaderCircle size={15} className="animate-spin" /> : <Save size={15} />}
+                            {saving ? (
+                                <LoaderCircle size={15} className="animate-spin" />
+                            ) : (
+                                <Save size={15} />
+                            )}
                             {saving ? "Saving..." : "Save changes"}
                         </button>
                     </div>
@@ -435,21 +495,29 @@ function PageEditor({
     const title = page.title || `${sectionLabel} section`;
 
     return (
-        <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/[.03]">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 p-5 sm:p-6">
+        <section className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card-bg)] shadow-[var(--shadow)]">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border)] p-5 sm:p-6">
                 <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-lime/10 px-3 py-1 text-xs font-semibold text-lime">{pageLabel}</span>
-                        <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-zinc-400">{sectionLabel}</span>
+                        <span className="rounded-full bg-[var(--surface-secondary)] px-3 py-1 text-xs font-semibold text-[var(--accent)]">
+                            {pageLabel}
+                        </span>
+
+                        <span className="rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--muted)]">
+                            {sectionLabel}
+                        </span>
                     </div>
-                    <h3 className="mt-3 text-lg font-bold">{title}</h3>
-                    <p className="mt-1 text-sm text-zinc-400">Edit the content for this section of your website.</p>
+
+                    <h3 className="mt-3 text-lg font-bold text-[var(--fg)]">{title}</h3>
+                    <p className="mt-1 text-sm text-[var(--muted)]">
+                        Edit the content for this section of your website.
+                    </p>
                 </div>
 
                 <button
                     type="button"
                     onClick={() => setExpanded((prev) => !prev)}
-                    className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-300 transition hover:bg-white/5"
+                    className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--fg)] transition hover:bg-[var(--surface-secondary)]"
                 >
                     {expanded ? "Collapse" : "Edit content"}
                 </button>
@@ -458,7 +526,9 @@ function PageEditor({
             {expanded && (
                 <div className="p-5 sm:p-6">
                     {Object.keys(content).length === 0 ? (
-                        <p className="text-sm text-zinc-400">This section has no editable fields.</p>
+                        <p className="text-sm text-[var(--muted)]">
+                            This section has no editable fields.
+                        </p>
                     ) : (
                         <div className="grid gap-5 sm:grid-cols-2">
                             {Object.entries(content).map(([key, value]) => (
@@ -466,22 +536,34 @@ function PageEditor({
                                     <Field
                                         name={key}
                                         value={value}
-                                        onChange={(nextValue) => setContent((prev) => ({ ...prev, [key]: nextValue }))}
+                                        onChange={(nextValue) =>
+                                            setContent((prev) => ({
+                                                ...prev,
+                                                [key]: nextValue,
+                                            }))
+                                        }
                                     />
                                 </div>
                             ))}
                         </div>
                     )}
 
-                    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-5">
-                        <p className="text-xs text-zinc-500">Page: {pageLabel} · Section: {sectionLabel}</p>
+                    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border)] pt-5">
+                        <p className="text-xs text-[var(--muted)]">
+                            Page: {pageLabel} · Section: {sectionLabel}
+                        </p>
+
                         <button
                             type="button"
                             disabled={saving}
                             onClick={() => onSave({ ...page, content })}
                             className="btn btn-primary disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            {saving ? <LoaderCircle size={15} className="animate-spin" /> : <Save size={15} />}
+                            {saving ? (
+                                <LoaderCircle size={15} className="animate-spin" />
+                            ) : (
+                                <Save size={15} />
+                            )}
                             {saving ? "Saving..." : "Save changes"}
                         </button>
                     </div>
@@ -496,6 +578,7 @@ export function AdminDashboard() {
     const [rows, setRows] = useState<Item[]>([]);
     const [settings, setSettings] = useState<Item>({});
     const [pages, setPages] = useState<Item[]>([]);
+
     const [homeSections, setHomeSections] = useState<Item>(defaultHomeSections);
     const [portfolioSections, setPortfolioSections] = useState<Item>(defaultPortfolioSections);
     const [certificationSections, setCertificationSections] = useState<Item>(defaultCertificationSections);
@@ -503,6 +586,7 @@ export function AdminDashboard() {
     const [aboutSections, setAboutSections] = useState<Item>(defaultAboutSections);
     const [servicesSections, setServicesSections] = useState<Item>(defaultServicesSections);
     const [contactSections, setContactSections] = useState<Item>(defaultContactSections);
+
     const [editing, setEditing] = useState<Item | null>(null);
     const [notice, setNotice] = useState("");
     const [loading, setLoading] = useState(false);
@@ -518,13 +602,20 @@ export function AdminDashboard() {
                 const data = await readResponse(response);
                 const result = data?.settings ?? data?.data ?? data;
 
-                setSettings(result && typeof result === "object" && !Array.isArray(result) ? result : {});
+                setSettings(
+                    result && typeof result === "object" && !Array.isArray(result)
+                        ? result
+                        : {}
+                );
             } else if (tab === "pages") {
                 const response = await fetch("/api/admin/pages");
                 const records = asArray(await readResponse(response));
 
                 function getSection(page: string, section: string, fallback: Item) {
-                    const record = records.find((item) => item.page === page && item.section === section);
+                    const record = records.find(
+                        (item) => item.page === page && item.section === section
+                    );
+
                     return { ...fallback, ...parseContent(record) };
                 }
 
@@ -532,7 +623,9 @@ export function AdminDashboard() {
                 setHomeSections(getSection("home", "sections", defaultHomeSections));
                 setAboutSections(getSection("about", "main", defaultAboutSections));
                 setPortfolioSections(getSection("portfolio", "main", defaultPortfolioSections));
-                setCertificationSections(getSection("portfolio", "certifications", defaultCertificationSections));
+                setCertificationSections(
+                    getSection("portfolio", "certifications", defaultCertificationSections)
+                );
                 setServicesSections(getSection("services", "main", defaultServicesSections));
                 setContactSections(getSection("contact", "main", defaultContactSections));
 
@@ -546,7 +639,12 @@ export function AdminDashboard() {
                     "contact:main",
                 ]);
 
-                setPages(records.filter((item) => !dedicatedSections.has(`${item.page}:${item.section}`)));
+                setPages(
+                    records.filter(
+                        (item) =>
+                            !dedicatedSections.has(`${item.page}:${item.section}`)
+                    )
+                );
             } else if (resources.some((resource) => resource[0] === tab)) {
                 const response = await fetch(`/api/admin/${tab}`);
                 setRows(asArray(await readResponse(response)));
@@ -558,7 +656,11 @@ export function AdminDashboard() {
                     })
                 );
 
-                setRows(results.flatMap(([key, items]) => items.map((item) => ({ ...item, _resource: key }))));
+                setRows(
+                    results.flatMap(([key, items]) =>
+                        items.map((item) => ({ ...item, _resource: key }))
+                    )
+                );
             }
         } catch (error) {
             setNotice(error instanceof Error ? error.message : "Could not load data.");
@@ -588,7 +690,10 @@ export function AdminDashboard() {
         const resource = String(data._resource || tab);
 
         if (resource === "projects" && typeof data.tags === "string") {
-            data.tags = data.tags.split(",").map((tag: string) => tag.trim()).filter(Boolean);
+            data.tags = data.tags
+                .split(",")
+                .map((tag: string) => tag.trim())
+                .filter(Boolean);
         }
 
         delete data._resource;
@@ -616,9 +721,10 @@ export function AdminDashboard() {
         if (!confirm("Delete this item? This cannot be undone.")) return;
 
         try {
-            const response = await fetch(`/api/admin/${resource}?id=${encodeURIComponent(row.id)}`, {
-                method: "DELETE",
-            });
+            const response = await fetch(
+                `/api/admin/${resource}?id=${encodeURIComponent(row.id)}`,
+                { method: "DELETE" }
+            );
 
             await readResponse(response);
             setNotice("Item deleted.");
@@ -697,14 +803,18 @@ export function AdminDashboard() {
     const current = resources.find((resource) => resource[0] === tab);
 
     return (
-        <div className="min-h-screen bg-[#101014] text-white md:flex">
-            <aside className="border-b border-white/10 p-4 md:sticky md:top-0 md:h-screen md:w-64 md:shrink-0 md:border-b-0 md:border-r">
-                <a href="/" className="flex items-center gap-3 px-2 py-3 font-bold">
-                    <span className="grid h-9 w-9 place-items-center rounded-xl bg-lime text-black">R.</span>
+        <div className="min-h-screen bg-[var(--bg)] text-[var(--fg)] md:flex">
+            <aside className="border-b border-[var(--border)] bg-[var(--surface)] p-4 md:sticky md:top-0 md:h-screen md:w-64 md:shrink-0 md:border-b-0 md:border-r">
+                <a href="/" className="flex items-center gap-3 px-2 py-3 font-bold text-[var(--fg)]">
+                    <span className="grid h-9 w-9 place-items-center rounded-xl bg-[var(--accent)] text-[var(--bg)]">
+                        R
+                    </span>
                     Portfolio CMS
                 </a>
 
-                <p className="mb-3 mt-7 px-3 text-[10px] font-bold uppercase tracking-[.25em] text-zinc-500">Workspace</p>
+                <p className="mb-3 mt-7 px-3 text-[10px] font-bold uppercase tracking-[.25em] text-[var(--muted)]">
+                    Workspace
+                </p>
 
                 <nav className="flex gap-2 overflow-x-auto md:flex-col">
                     {[
@@ -719,7 +829,11 @@ export function AdminDashboard() {
                                 setTab(key);
                                 setEditing(null);
                             }}
-                            className={`flex shrink-0 items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm ${tab === key ? "bg-lime font-bold text-black" : "text-zinc-400 hover:bg-white/5 hover:text-white"}`}
+                            className={`flex shrink-0 items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
+                                tab === key
+                                    ? "bg-[var(--accent)] font-bold text-[var(--bg)]"
+                                    : "text-[var(--muted)] hover:bg-[var(--surface-secondary)] hover:text-[var(--fg)]"
+                            }`}
                         >
                             <Icon size={17} />
                             {label}
@@ -732,7 +846,7 @@ export function AdminDashboard() {
                         await fetch("/api/admin/logout", { method: "POST" });
                         window.location.href = "/admin/login";
                     }}
-                    className="mt-6 flex items-center gap-3 px-3 py-2 text-sm text-zinc-400 hover:text-white"
+                    className="mt-6 flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-[var(--muted)] transition hover:bg-[var(--surface-secondary)] hover:text-[var(--fg)]"
                 >
                     <LogOut size={17} />
                     Sign out
@@ -742,85 +856,152 @@ export function AdminDashboard() {
             <main className="min-w-0 flex-1 p-5 pb-10 sm:p-8">
                 <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
                     <div>
-                        <p className="text-xs uppercase tracking-[.25em] text-lime">Control center</p>
-                        <h1 className="mt-2 text-3xl font-bold">
-                            {current?.[1] || ({ overview: "Overview", settings: "Site settings", pages: "Page content" } as Record<string, string>)[tab]}
+                        <p className="text-xs uppercase tracking-[.25em] text-[var(--accent)]">
+                            Control center
+                        </p>
+
+                        <h1 className="mt-2 text-3xl font-bold text-[var(--fg)]">
+                            {current?.[1] ||
+                                ({
+                                    overview: "Overview",
+                                    settings: "Site settings",
+                                    pages: "Page content",
+                                } as Record<string, string>)[tab]}
                         </h1>
-                        <p className="mt-2 text-sm text-zinc-400">Manage the content of your portfolio.</p>
+
+                        <p className="mt-2 text-sm text-[var(--muted)]">
+                            Manage the content of your portfolio.
+                        </p>
                     </div>
 
                     <div className="flex gap-2">
-                        <button onClick={() => void load()} className="glass rounded-full p-3" aria-label="Refresh">
+                        <button
+                            onClick={() => void load()}
+                            className="glass rounded-full p-3 text-[var(--fg)] transition hover:bg-[var(--surface-secondary)]"
+                            aria-label="Refresh"
+                        >
                             <RefreshCw size={16} />
                         </button>
-                        <a href="/" target="_blank" rel="noreferrer" className="rounded-full border border-white/15 px-4 py-2.5 text-sm">
+
+                        <a
+                            href="/"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="rounded-full border border-[var(--border-strong)] px-4 py-2.5 text-sm text-[var(--fg)] transition hover:bg-[var(--surface-secondary)]"
+                        >
                             View site ↗
                         </a>
                     </div>
                 </header>
 
                 {notice && (
-                    <div className="mb-5 flex items-start justify-between gap-3 rounded-xl border border-lime/20 bg-lime/10 px-4 py-3 text-sm text-lime">
+                    <div className="mb-5 flex items-start justify-between gap-3 rounded-xl border border-[var(--border-strong)] bg-[var(--surface-secondary)] px-4 py-3 text-sm text-[var(--fg)]">
                         <span>{notice}</span>
-                        <button onClick={() => setNotice("")} aria-label="Dismiss message">×</button>
+                        <button
+                            onClick={() => setNotice("")}
+                            aria-label="Dismiss message"
+                            className="text-[var(--muted)] transition hover:text-[var(--fg)]"
+                        >
+                            ×
+                        </button>
                     </div>
                 )}
 
                 {loading ? (
-                    <p className="text-zinc-400">Loading…</p>
+                    <p className="text-[var(--muted)]">Loading…</p>
                 ) : tab === "overview" ? (
                     <>
                         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                             {resources.map(([key, label, Icon]) => (
-                                <button key={key} onClick={() => setTab(key)} className="card p-5 text-left">
-                                    <Icon className="text-lime" size={20} />
-                                    <p className="mt-5 text-2xl font-bold">
+                                <button
+                                    key={key}
+                                    onClick={() => setTab(key)}
+                                    className="card rounded-2xl p-5 text-left transition hover:-translate-y-0.5"
+                                >
+                                    <Icon className="text-[var(--accent)]" size={20} />
+
+                                    <p className="mt-5 text-2xl font-bold text-[var(--fg)]">
                                         {rows.filter((row) => row._resource === key).length}
                                     </p>
-                                    <p className="mt-1 text-sm text-zinc-400">{label}</p>
+
+                                    <p className="mt-1 text-sm text-[var(--muted)]">{label}</p>
                                 </button>
                             ))}
                         </div>
 
-                        <div className="card mt-6 p-6">
-                            <h2 className="text-lg font-bold">Quick start</h2>
-                            <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
+                        <div className="card mt-6 rounded-2xl p-6">
+                            <h2 className="text-lg font-bold text-[var(--fg)]">Quick start</h2>
+
+                            <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">
                                 Manage projects, skills, experience, certificates, services, blog posts and social links.
                                 Update site settings and page content to control your public portfolio.
                             </p>
-                            <button onClick={() => setTab("settings")} className="btn btn-primary mt-5">
+
+                            <button
+                                onClick={() => setTab("settings")}
+                                className="btn btn-primary mt-5"
+                            >
                                 Configure site <Settings size={15} />
                             </button>
                         </div>
                     </>
                 ) : tab === "settings" ? (
-                    <div className="card max-w-3xl p-6">
+                    <div className="card max-w-3xl rounded-2xl p-6">
                         <div className="grid gap-5 sm:grid-cols-2">
                             {[
-                                "siteTitle", "tagline", "logoUrl", "profileUrl", "seoTitle", "seoDescription",
-                                "primaryColor", "backgroundColor", "navText", "footerText", "contactEmail", "contactLocation",
+                                "siteTitle",
+                                "tagline",
+                                "logoUrl",
+                                "profileUrl",
+                                "seoTitle",
+                                "seoDescription",
+                                "primaryColor",
+                                "backgroundColor",
+                                "navText",
+                                "footerText",
+                                "contactEmail",
+                                "contactLocation",
                             ].map((key) => (
                                 <label
                                     key={key}
-                                    className={`block space-y-2 text-sm ${imagePattern.test(key) || key === "seoDescription" ? "sm:col-span-2" : ""}`}
+                                    className={`block space-y-2 text-sm ${
+                                        imagePattern.test(key) || key === "seoDescription"
+                                            ? "sm:col-span-2"
+                                            : ""
+                                    }`}
                                 >
-                                    <span className="block capitalize text-zinc-400">{humanize(key)}</span>
+                                    <span className="block capitalize text-[var(--muted)]">
+                                        {humanize(key)}
+                                    </span>
+
                                     {imagePattern.test(key) ? (
                                         <ImageUploader
                                             value={settings[key] ?? ""}
-                                            onChange={(url) => setSettings((prev) => ({ ...prev, [key]: url }))}
+                                            onChange={(url) =>
+                                                setSettings((prev) => ({ ...prev, [key]: url }))
+                                            }
                                         />
                                     ) : ["seoDescription", "tagline", "footerText", "navText"].includes(key) ? (
                                         <textarea
                                             rows={3}
                                             value={settings[key] ?? ""}
-                                            onChange={(event) => setSettings({ ...settings, [key]: event.target.value })}
+                                            onChange={(event) =>
+                                                setSettings({
+                                                    ...settings,
+                                                    [key]: event.target.value,
+                                                })
+                                            }
                                             className={inputClass}
                                         />
                                     ) : (
                                         <input
                                             value={settings[key] ?? ""}
-                                            onChange={(event) => setSettings({ ...settings, [key]: event.target.value })}
+                                            onChange={(event) =>
+                                                setSettings({
+                                                    ...settings,
+                                                    [key]: event.target.value,
+                                                })
+                                            }
                                             className={inputClass}
                                         />
                                     )}
@@ -828,21 +1009,33 @@ export function AdminDashboard() {
                             ))}
                         </div>
 
-                        <button onClick={() => void saveSettings()} disabled={saving} className="btn btn-primary mt-6 disabled:opacity-50">
-                            {saving ? <LoaderCircle size={15} className="animate-spin" /> : <Save size={15} />}
+                        <button
+                            onClick={() => void saveSettings()}
+                            disabled={saving}
+                            className="btn btn-primary mt-6 disabled:opacity-50"
+                        >
+                            {saving ? (
+                                <LoaderCircle size={15} className="animate-spin" />
+                            ) : (
+                                <Save size={15} />
+                            )}
                             Save settings
                         </button>
                     </div>
                 ) : tab === "pages" ? (
                     <div className="space-y-6">
-                        <div className="card p-5 sm:p-6">
+                        <div className="card rounded-2xl p-5 sm:p-6">
                             <div className="flex items-start gap-3">
-                                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-lime/10 text-lime">
+                                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[var(--surface-secondary)] text-[var(--accent)]">
                                     <FileText size={21} />
                                 </div>
+
                                 <div>
-                                    <h2 className="text-lg font-bold">Manage page content</h2>
-                                    <p className="mt-1 text-sm leading-6 text-zinc-400">
+                                    <h2 className="text-lg font-bold text-[var(--fg)]">
+                                        Manage page content
+                                    </h2>
+
+                                    <p className="mt-1 text-sm leading-6 text-[var(--muted)]">
                                         Edit headings, descriptions, and other content displayed across your portfolio.
                                     </p>
                                 </div>
@@ -938,11 +1131,16 @@ export function AdminDashboard() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="card p-6">
-                                <p className="text-sm text-zinc-400">
+                            <div className="card rounded-2xl p-6">
+                                <p className="text-sm text-[var(--muted)]">
                                     No additional page content records were found. The dedicated page editors are available above.
                                 </p>
-                                <button type="button" onClick={() => void load()} className="btn btn-primary mt-4">
+
+                                <button
+                                    type="button"
+                                    onClick={() => void load()}
+                                    className="btn btn-primary mt-4"
+                                >
                                     <RefreshCw size={15} />
                                     Reload content
                                 </button>
@@ -952,17 +1150,30 @@ export function AdminDashboard() {
                 ) : (
                     <>
                         <div className="mb-5 flex justify-end">
-                            <button onClick={() => setEditing({ ...blank[tab], _resource: tab })} className="btn btn-primary">
+                            <button
+                                onClick={() =>
+                                    setEditing({ ...blank[tab], _resource: tab })
+                                }
+                                className="btn btn-primary"
+                            >
                                 <Plus size={16} />
                                 Add {current?.[1]?.replace(/s$/, " item") || "item"}
                             </button>
                         </div>
 
                         {editing && (
-                            <div className="card mb-6 p-5 sm:p-7">
+                            <div className="card mb-6 rounded-2xl p-5 sm:p-7">
                                 <div className="mb-5 flex items-center justify-between">
-                                    <h2 className="text-lg font-bold">{editing.id ? "Edit item" : "New item"}</h2>
-                                    <button onClick={() => setEditing(null)} className="text-sm text-zinc-400">Cancel</button>
+                                    <h2 className="text-lg font-bold text-[var(--fg)]">
+                                        {editing.id ? "Edit item" : "New item"}
+                                    </h2>
+
+                                    <button
+                                        onClick={() => setEditing(null)}
+                                        className="text-sm text-[var(--muted)] transition hover:text-[var(--fg)]"
+                                    >
+                                        Cancel
+                                    </button>
                                 </div>
 
                                 <div className="grid gap-4 sm:grid-cols-2">
@@ -971,13 +1182,27 @@ export function AdminDashboard() {
                                             key={key}
                                             name={key}
                                             value={editing[key] ?? blank[tab]?.[key] ?? ""}
-                                            onChange={(value) => setEditing((prev) => prev ? { ...prev, [key]: value } : prev)}
+                                            onChange={(value) =>
+                                                setEditing((prev) =>
+                                                    prev
+                                                        ? { ...prev, [key]: value }
+                                                        : prev
+                                                )
+                                            }
                                         />
                                     ))}
                                 </div>
 
-                                <button onClick={() => void save()} disabled={saving} className="btn btn-primary mt-6 disabled:opacity-50">
-                                    {saving ? <LoaderCircle size={15} className="animate-spin" /> : <Save size={15} />}
+                                <button
+                                    onClick={() => void save()}
+                                    disabled={saving}
+                                    className="btn btn-primary mt-6 disabled:opacity-50"
+                                >
+                                    {saving ? (
+                                        <LoaderCircle size={15} className="animate-spin" />
+                                    ) : (
+                                        <Save size={15} />
+                                    )}
                                     Save item
                                 </button>
                             </div>
@@ -985,42 +1210,66 @@ export function AdminDashboard() {
 
                         <div className="grid gap-3">
                             {rows.map((row, index) => {
-                                const title = row.title || row.name || row.role || row.label || row.institution || "Untitled item";
+                                const title =
+                                    row.title ||
+                                    row.name ||
+                                    row.role ||
+                                    row.label ||
+                                    row.institution ||
+                                    "Untitled item";
+
                                 const image = row.imageUrl || row.coverUrl || "";
 
                                 return (
                                     <div
                                         key={row.id ?? row.slug ?? index}
-                                        className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[.03] p-4"
+                                        className="flex items-center justify-between gap-4 rounded-2xl border border-[var(--border)] bg-[var(--card-bg)] p-4 shadow-[var(--shadow)]"
                                     >
                                         <div className="flex min-w-0 items-center gap-3">
                                             {image ? (
-                                                <img src={image} alt="" className="h-12 w-12 shrink-0 rounded-lg object-cover" />
+                                                <img
+                                                    src={image}
+                                                    alt=""
+                                                    className="h-12 w-12 shrink-0 rounded-lg object-cover"
+                                                />
                                             ) : (
-                                                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-white/5 text-zinc-500">
+                                                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-[var(--surface-secondary)] text-[var(--muted)]">
                                                     <ImageIcon size={18} />
                                                 </div>
                                             )}
 
                                             <div className="min-w-0">
-                                                <p className="truncate font-semibold">{title}</p>
-                                                <p className="mt-1 truncate text-xs text-zinc-500">
-                                                    {row.company || row.category || row.issuer || row.url || row.slug || row.status || row.description || row.qualification}
+                                                <p className="truncate font-semibold text-[var(--fg)]">
+                                                    {title}
+                                                </p>
+
+                                                <p className="mt-1 truncate text-xs text-[var(--muted)]">
+                                                    {row.company ||
+                                                        row.category ||
+                                                        row.issuer ||
+                                                        row.url ||
+                                                        row.slug ||
+                                                        row.status ||
+                                                        row.description ||
+                                                        row.qualification}
                                                 </p>
                                             </div>
                                         </div>
 
                                         <div className="flex shrink-0 gap-2">
                                             <button
-                                                onClick={() => setEditing({ ...row, _resource: tab })}
-                                                className="rounded-full border border-white/15 px-3 py-2 text-xs"
+                                                onClick={() =>
+                                                    setEditing({ ...row, _resource: tab })
+                                                }
+                                                className="rounded-full border border-[var(--border-strong)] px-3 py-2 text-xs text-[var(--fg)] transition hover:bg-[var(--surface-secondary)]"
                                             >
                                                 Edit
                                             </button>
+
                                             <button
                                                 onClick={() => void remove(row)}
                                                 aria-label="Delete item"
-                                                className="rounded-full border border-red-400/20 p-2 text-red-300"
+                                                className="rounded-full border border-red-400/30 p-2 text-red-500 transition hover:bg-red-500/10"
                                             >
                                                 <Trash2 size={15} />
                                             </button>
